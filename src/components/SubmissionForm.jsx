@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, Loader2 } from 'lucide-react';
+import { CheckCircle2, Loader2, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useStore } from '../data/store';
 
 const GithubIcon = ({ className }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className} width="18" height="18">
@@ -15,17 +16,22 @@ const LinkedinIcon = ({ className }) => (
   </svg>
 );
 
-export default function SubmissionForm({ day, alreadySubmitted }) {
+export default function SubmissionForm({ day, alreadySubmitted, realStreak }) {
   const navigate = useNavigate();
-  const [githubUrl, setGithubUrl] = useState(alreadySubmitted ? 'https://github.com/suryansh/repo/commit/123' : '');
-  const [linkedinUrl, setLinkedinUrl] = useState(alreadySubmitted ? 'https://linkedin.com/posts/suryansh' : '');
+  const { submitDay, getSubmission } = useStore();
+  const existingSub = getSubmission(day);
+  
+  const [githubUrl, setGithubUrl] = useState(existingSub?.githubUrl || '');
+  const [linkedinUrl, setLinkedinUrl] = useState(existingSub?.linkedinUrl || '');
+  const [notes, setNotes] = useState(existingSub?.notes || '');
   
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const isValidGithub = githubUrl.startsWith('https://github.com');
-  const isValidLinkedin = linkedinUrl.startsWith('https://linkedin.com');
+  const isValidLinkedin = linkedinUrl.length === 0 || linkedinUrl.startsWith('https://linkedin.com') || linkedinUrl.startsWith('https://www.linkedin.com');
   
+  // GitHub is required, LinkedIn is optional
   const canSubmit = isValidGithub && isValidLinkedin && !alreadySubmitted;
 
   const handleSubmit = (e) => {
@@ -33,14 +39,20 @@ export default function SubmissionForm({ day, alreadySubmitted }) {
     if (!canSubmit) return;
     
     setSubmitting(true);
-    // Simulate API call
+    // Small delay for UX
     setTimeout(() => {
+      submitDay(day, {
+        githubUrl,
+        linkedinUrl,
+        notes,
+      });
       setSubmitting(false);
       setSuccess(true);
-    }, 1500);
+    }, 800);
   };
 
-  if (success) {
+  if (success || alreadySubmitted) {
+    const streakDisplay = realStreak || 1;
     return (
       <div className="glass-card p-8 text-center relative overflow-hidden flex flex-col items-center justify-center min-h-[300px]">
         <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
@@ -50,8 +62,17 @@ export default function SubmissionForm({ day, alreadySubmitted }) {
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}>
           <CheckCircle2 size={64} className="text-success mx-auto mb-4" />
         </motion.div>
-        <h3 className="text-2xl font-bold mb-2">Day {day} Submitted! 🔥</h3>
-        <p className="text-gray-400 mb-6">Streak: 13 days and counting</p>
+        <h3 className="text-2xl font-bold mb-2">Day {day} {success ? 'Submitted' : 'Completed'}! 🔥</h3>
+        <p className="text-gray-400 mb-6">Streak: {streakDisplay} day{streakDisplay !== 1 ? 's' : ''} and counting</p>
+        
+        {existingSub?.notes && (
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6 text-left w-full max-w-sm">
+            <div className="flex items-center gap-2 text-xs text-gray-500 mb-2 font-semibold uppercase tracking-wider">
+              <MessageSquare size={12} /> Your Notes
+            </div>
+            <p className="text-sm text-gray-300">{existingSub.notes}</p>
+          </div>
+        )}
         
         <button 
           onClick={() => navigate('/dashboard')}
@@ -66,13 +87,6 @@ export default function SubmissionForm({ day, alreadySubmitted }) {
   return (
     <div className="glass-card p-6">
       <h3 className="font-bold text-lg mb-4">Submit Proof of Work</h3>
-      
-      {alreadySubmitted && (
-        <div className="bg-success/10 border border-success/30 text-success p-3 rounded-xl text-sm mb-4 flex items-center gap-2">
-          <CheckCircle2 size={16} />
-          <span>You already submitted Day {day} ✅ Great work!</span>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -85,8 +99,7 @@ export default function SubmissionForm({ day, alreadySubmitted }) {
               placeholder="https://github.com/username/repo/commit/..."
               value={githubUrl}
               onChange={(e) => setGithubUrl(e.target.value)}
-              disabled={alreadySubmitted}
-              className={`w-full bg-[#1A1A24] border ${githubUrl && !isValidGithub ? 'border-danger' : isValidGithub ? 'border-success/50' : 'border-white/10'} rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-primary transition-colors disabled:opacity-50`}
+              className={`w-full bg-[#1A1A24] border ${githubUrl && !isValidGithub ? 'border-danger' : isValidGithub ? 'border-success/50' : 'border-white/10'} rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-primary transition-colors`}
             />
             {isValidGithub && (
               <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-success">
@@ -102,17 +115,16 @@ export default function SubmissionForm({ day, alreadySubmitted }) {
         <div>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <LinkedinIcon className={isValidLinkedin ? 'text-success' : 'text-gray-500'} />
+              <LinkedinIcon className={linkedinUrl && isValidLinkedin && linkedinUrl.length > 0 ? 'text-success' : 'text-gray-500'} />
             </div>
             <input 
               type="text" 
-              placeholder="https://linkedin.com/posts/..."
+              placeholder="https://linkedin.com/posts/... (optional)"
               value={linkedinUrl}
               onChange={(e) => setLinkedinUrl(e.target.value)}
-              disabled={alreadySubmitted}
-              className={`w-full bg-[#1A1A24] border ${linkedinUrl && !isValidLinkedin ? 'border-danger' : isValidLinkedin ? 'border-success/50' : 'border-white/10'} rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-primary transition-colors disabled:opacity-50`}
+              className={`w-full bg-[#1A1A24] border ${linkedinUrl && !isValidLinkedin ? 'border-danger' : linkedinUrl && isValidLinkedin ? 'border-success/50' : 'border-white/10'} rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-primary transition-colors`}
             />
-            {isValidLinkedin && (
+            {linkedinUrl && isValidLinkedin && linkedinUrl.length > 0 && (
               <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-success">
                 <CheckCircle2 size={18} />
               </div>
@@ -121,6 +133,20 @@ export default function SubmissionForm({ day, alreadySubmitted }) {
           {linkedinUrl && !isValidLinkedin && (
             <p className="text-danger text-xs mt-1 ml-1">Please enter a valid LinkedIn URL</p>
           )}
+        </div>
+
+        {/* Notes textarea */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-400 mb-2 flex items-center gap-2">
+            <MessageSquare size={14} /> Notes (optional)
+          </label>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="What did you learn today? Any blockers?"
+            rows={3}
+            className="w-full bg-[#1A1A24] border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary transition-colors placeholder:text-gray-600 resize-none text-sm"
+          />
         </div>
 
         <button 

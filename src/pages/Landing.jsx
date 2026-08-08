@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, useInView } from 'framer-motion';
-import { ArrowRight, Terminal, Globe, Zap, Bot, Shield, ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { ArrowRight, Terminal, Globe, Zap, Bot, Shield, ChevronDown, X, User, GraduationCap, BookOpen } from 'lucide-react';
 import { useToast } from '../components/Toast';
+import { useStore } from '../data/store';
 import { leaderboard } from '../data/mock';
 
 const GithubIcon = ({ size = 20 }) => (
@@ -144,8 +145,11 @@ const item = {
 export default function Landing() {
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const { hasProfile, setProfile } = useStore();
   const [email, setEmail] = useState('');
   const [scrollY, setScrollY] = useState(0);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileForm, setProfileForm] = useState({ name: '', college: '', branch: '', track: 'Cybersecurity' });
 
   const heroCounter = useAnimatedCounter(2400, 2000, false);
   const daysCounter = useAnimatedCounter(60, 1500);
@@ -278,10 +282,10 @@ export default function Landing() {
             className="flex flex-col sm:flex-row w-full gap-4 px-4 sm:px-0 sm:justify-center"
           >
             <button 
-              onClick={() => navigate('/dashboard')}
+              onClick={() => hasProfile ? navigate('/dashboard') : setShowProfileModal(true)}
               className="btn-glass-primary py-4 px-8 flex items-center justify-center gap-2 text-lg group"
             >
-              Start Your 60 Days 
+              {hasProfile ? 'Go to Dashboard' : 'Start Your 60 Days'}
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </button>
             <button 
@@ -495,6 +499,127 @@ export default function Landing() {
           </p>
         </footer>
       </motion.section>
+
+      {/* PROFILE SETUP MODAL */}
+      <AnimatePresence>
+        {showProfileModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+            onClick={(e) => e.target === e.currentTarget && setShowProfileModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="w-full max-w-md glass-card p-8 relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full blur-[80px]" />
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-secondary/10 rounded-full blur-[60px]" />
+              
+              <button
+                onClick={() => setShowProfileModal(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition-all z-10"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="relative z-10">
+                <h2 className="text-2xl font-bold mb-1">Set Up Your Profile</h2>
+                <p className="text-gray-400 text-sm mb-6">Let's personalize your 60-day journey.</p>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5 flex items-center gap-2">
+                      <User size={14} className="text-primary" /> Your Name
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.name}
+                      onChange={(e) => setProfileForm(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="e.g., Suryansh Gupta"
+                      className="w-full bg-[#1A1A24] border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary transition-colors placeholder:text-gray-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5 flex items-center gap-2">
+                      <GraduationCap size={14} className="text-secondary" /> College
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.college}
+                      onChange={(e) => setProfileForm(prev => ({ ...prev, college: e.target.value }))}
+                      placeholder="e.g., AKGEC"
+                      className="w-full bg-[#1A1A24] border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary transition-colors placeholder:text-gray-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-1.5 flex items-center gap-2">
+                      <BookOpen size={14} className="text-success" /> Branch / Course
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.branch}
+                      onChange={(e) => setProfileForm(prev => ({ ...prev, branch: e.target.value }))}
+                      placeholder="e.g., B.Tech in IT"
+                      className="w-full bg-[#1A1A24] border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-primary transition-colors placeholder:text-gray-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Choose Your Track</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { name: 'Cybersecurity', icon: <Shield size={18} />, color: 'primary' },
+                        { name: 'Web Development', icon: <Globe size={18} />, color: 'secondary' },
+                        { name: 'DSA & CP', icon: <Zap size={18} />, color: 'success' },
+                        { name: 'AI/ML', icon: <Bot size={18} />, color: 'purple-400' },
+                      ].map((t) => (
+                        <button
+                          key={t.name}
+                          onClick={() => setProfileForm(prev => ({ ...prev, track: t.name }))}
+                          className={`p-3 rounded-xl border text-sm font-medium flex items-center gap-2 transition-all duration-200 ${
+                            profileForm.track === t.name
+                              ? 'bg-primary/20 border-primary/50 text-white ring-1 ring-primary/30'
+                              : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10'
+                          }`}
+                        >
+                          {t.icon} {t.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      if (!profileForm.name.trim()) {
+                        addToast('Please enter your name', 'error');
+                        return;
+                      }
+                      if (!profileForm.college.trim()) {
+                        addToast('Please enter your college', 'error');
+                        return;
+                      }
+                      setProfile(profileForm);
+                      setShowProfileModal(false);
+                      addToast(`Welcome, ${profileForm.name}! Let's build! 🔥`, 'success');
+                      setTimeout(() => navigate('/dashboard'), 500);
+                    }}
+                    className="btn-glass-primary py-4 w-full text-lg mt-2"
+                  >
+                    Start My Journey 🚀
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

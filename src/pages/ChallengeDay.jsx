@@ -1,21 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Lock, ExternalLink, Clock, BookOpen } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { todayTask, student, submissionHistory, allDays } from '../data/mock';
+import { ArrowLeft, CheckCircle2, Lock, ExternalLink, Clock, BookOpen, Pencil, Plus } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useStore } from '../data/store';
 import SubmissionForm from '../components/SubmissionForm';
 import AIPostGenerator from '../components/AIPostGenerator';
+import TaskEditor from '../components/TaskEditor';
 
 // Difficulty color helper
 function getDifficultyColor(difficulty) {
-  const d = (difficulty || 'Intermediate').toLowerCase();
+  const d = (difficulty || 'Medium').toLowerCase();
   if (d === 'easy' || d === 'beginner') return { bg: 'bg-success/20', text: 'text-success', border: 'border-success/30' };
   if (d === 'hard' || d === 'advanced') return { bg: 'bg-danger/20', text: 'text-danger-light', border: 'border-danger/30' };
   return { bg: 'bg-amber/20', text: 'text-amber', border: 'border-amber/30' };
 }
 
 // Progress stepper for days
-function DayStepper({ currentDay, totalDays }) {
+function DayStepper({ currentDay, totalDays, submissionHistory }) {
   const days = [];
   for (let i = Math.max(1, currentDay - 2); i <= Math.min(totalDays, currentDay + 2); i++) {
     days.push(i);
@@ -25,8 +26,9 @@ function DayStepper({ currentDay, totalDays }) {
     <div className="flex items-center justify-center gap-1 sm:gap-2">
       {days.map((d, idx) => {
         const isActive = d === currentDay;
-        const isPast = d < student.day;
-        const submitted = submissionHistory.find(s => s.day === d)?.status === 'submitted';
+        const sub = submissionHistory.find(s => s.day === d);
+        const isPast = sub && sub.status !== 'future' && sub.status !== 'pending';
+        const submitted = sub?.status === 'submitted';
 
         return (
           <React.Fragment key={d}>
@@ -59,18 +61,25 @@ export default function ChallengeDay() {
   const { dayNumber } = useParams();
   const navigate = useNavigate();
   const day = parseInt(dayNumber);
+  const { student, getTask, getSubmission, submissionHistory, currentDay, streak } = useStore();
+  const [showEditor, setShowEditor] = useState(false);
+  const [editorKey, setEditorKey] = useState(0); // force re-render after save
 
-  // Simple mock logic for different days
-  const isFuture = day > student.day;
-  const isToday = day === student.day;
-  const alreadySubmitted = submissionHistory.find(s => s.day === day)?.status === 'submitted';
-  
-  const task = isToday ? todayTask : allDays.find(d => d.day === day) || todayTask;
+  if (!student) {
+    navigate('/');
+    return null;
+  }
 
-  const previousDays = submissionHistory.filter(s => s.day >= day - 3 && s.day < day && s.status === 'submitted');
+  const task = getTask(day);
+  const submission = getSubmission(day);
+  const isFuture = day > currentDay;
+  const isToday = day === currentDay;
+  const alreadySubmitted = submission?.status === 'submitted';
+
+  const previousSubmissions = submissionHistory.filter(s => s.day >= day - 3 && s.day < day && s.status === 'submitted');
 
   const todayDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  const diffColors = getDifficultyColor(task.difficulty);
+  const diffColors = task ? getDifficultyColor(task.difficulty) : {};
 
   return (
     <div className="min-h-screen pb-20 w-full relative">
@@ -105,7 +114,7 @@ export default function ChallengeDay() {
           animate={{ opacity: 1, y: 0 }}
           className="py-2"
         >
-          <DayStepper currentDay={day} totalDays={student.totalDays} />
+          <DayStepper currentDay={day} totalDays={student.totalDays} submissionHistory={submissionHistory} />
         </motion.div>
 
         {isFuture ? (
@@ -123,9 +132,9 @@ export default function ChallengeDay() {
               <Lock size={36} className="text-gray-500" />
             </motion.div>
             <h2 className="text-2xl font-bold mb-2 relative z-10">Locked</h2>
-            <p className="text-gray-400 relative z-10">Complete Day {student.day} first to unlock this challenge.</p>
+            <p className="text-gray-400 relative z-10">Complete Day {currentDay} first to unlock this challenge.</p>
             <button 
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate(`/day/${currentDay}`)}
               className="mt-8 btn-glass-primary py-3 px-8 relative z-10"
             >
               Go to Today's Task
@@ -137,84 +146,140 @@ export default function ChallengeDay() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            {/* TASK CARD */}
-            <div className="glass-card p-6 md:p-8 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-[60px]" />
+            {/* TASK EDITOR MODE */}
+            <AnimatePresence mode="wait">
+              {showEditor ? (
+                <TaskEditor
+                  key={`editor-${editorKey}`}
+                  day={day}
+                  existingTask={task}
+                  onClose={() => setShowEditor(false)}
+                  onSaved={() => {
+                    setShowEditor(false);
+                    setEditorKey(prev => prev + 1);
+                  }}
+                />
+              ) : task ? (
+                /* TASK CARD (existing task) */
+                <motion.div
+                  key={`task-${editorKey}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="glass-card p-6 md:p-8 relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-[60px]" />
 
-              <div className="flex justify-between items-start mb-6 relative z-10">
-                <h1 className="text-3xl font-extrabold">{task.title}</h1>
-                <span className={`${diffColors.bg} ${diffColors.text} ${diffColors.border} border px-3 py-1.5 rounded-lg text-sm font-semibold whitespace-nowrap ml-4`}>
-                  {task.difficulty || "Intermediate"}
-                </span>
-              </div>
-              
-              <p className="text-gray-300 mb-8 leading-relaxed text-lg relative z-10">
-                {task.description || "Learn how to secure your networks and find vulnerabilities using industry standard tools."}
-              </p>
-
-              {task.whatYouLearn && (
-                <div className="mb-8 relative z-10">
-                  <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                    <BookOpen size={20} className="text-success" /> What You'll Learn
-                  </h3>
-                  <ul className="space-y-3">
-                    {task.whatYouLearn.map((item, idx) => (
-                      <motion.li 
-                        key={idx} 
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 + idx * 0.1 }}
-                        className="flex items-start gap-3"
-                      >
-                        <CheckCircle2 size={20} className="text-success shrink-0 mt-0.5" />
-                        <span className="text-gray-300">{item}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {task.resources && (
-                <div className="relative z-10">
-                  <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                    <span className="text-secondary">📚</span> Resources
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {task.resources.map((res, idx) => (
-                      <a 
-                        key={idx}
-                        href={res.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:border-primary/30 hover:bg-white/10 transition-all duration-300 group"
-                      >
-                        <span className="text-sm font-medium">{res.label}</span>
-                        <ExternalLink size={16} className="text-gray-500 group-hover:text-primary transition-colors" />
-                      </a>
-                    ))}
+                  <div className="flex justify-between items-start mb-6 relative z-10">
+                    <h1 className="text-3xl font-extrabold">{task.title}</h1>
+                    <div className="flex items-center gap-2">
+                      <span className={`${diffColors.bg} ${diffColors.text} ${diffColors.border} border px-3 py-1.5 rounded-lg text-sm font-semibold whitespace-nowrap`}>
+                        {task.difficulty || "Medium"}
+                      </span>
+                      {!alreadySubmitted && (
+                        <button
+                          onClick={() => setShowEditor(true)}
+                          className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+                          title="Edit task"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
+                  
+                  <p className="text-gray-300 mb-8 leading-relaxed text-lg relative z-10">
+                    {task.description || "Learn how to secure your networks and find vulnerabilities using industry standard tools."}
+                  </p>
+
+                  {task.whatYouLearn && task.whatYouLearn.length > 0 && (
+                    <div className="mb-8 relative z-10">
+                      <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                        <BookOpen size={20} className="text-success" /> What You'll Learn
+                      </h3>
+                      <ul className="space-y-3">
+                        {task.whatYouLearn.map((item, idx) => (
+                          <motion.li 
+                            key={idx} 
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 + idx * 0.1 }}
+                            className="flex items-start gap-3"
+                          >
+                            <CheckCircle2 size={20} className="text-success shrink-0 mt-0.5" />
+                            <span className="text-gray-300">{item}</span>
+                          </motion.li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {task.resources && task.resources.length > 0 && (
+                    <div className="relative z-10">
+                      <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                        <span className="text-secondary">📚</span> Resources
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {task.resources.map((res, idx) => (
+                          <a 
+                            key={idx}
+                            href={res.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:border-primary/30 hover:bg-white/10 transition-all duration-300 group"
+                          >
+                            <span className="text-sm font-medium">{res.label}</span>
+                            <ExternalLink size={16} className="text-gray-500 group-hover:text-primary transition-colors" />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              ) : (
+                /* NO TASK — CREATE ONE */
+                <motion.div
+                  key="no-task"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="glass-card p-8 text-center relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-[60px]" />
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 relative z-10">
+                    <Plus size={28} className="text-primary" />
+                  </div>
+                  <h2 className="text-xl font-bold mb-2 relative z-10">No task for Day {day}</h2>
+                  <p className="text-gray-400 text-sm mb-6 relative z-10">Create a task manually or let AI generate one for you!</p>
+                  <button 
+                    onClick={() => setShowEditor(true)}
+                    className="btn-glass-primary py-3 px-8 relative z-10"
+                  >
+                    <Plus size={18} /> Create Task
+                  </button>
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
 
-            {/* AI POST GENERATOR */}
-            <AIPostGenerator task={task} student={student} />
+            {/* AI POST GENERATOR — only show if task exists */}
+            {task && <AIPostGenerator task={task} student={student} />}
 
-            {/* SUBMISSION FORM */}
-            <SubmissionForm day={day} alreadySubmitted={alreadySubmitted} />
+            {/* SUBMISSION FORM — only show if task exists */}
+            {task && (
+              <SubmissionForm day={day} alreadySubmitted={alreadySubmitted} realStreak={streak} />
+            )}
 
             {/* PREVIOUS DAYS STRIP */}
-            {previousDays.length > 0 && (
+            {previousSubmissions.length > 0 && (
               <div className="pt-4">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3 flex items-center gap-2">
                   <CheckCircle2 size={14} /> Previous Days
                 </h4>
                 <div className="flex overflow-x-auto hide-scrollbar gap-3 pb-2">
-                  {previousDays.map((pDay, idx) => (
+                  {previousSubmissions.map((pDay, idx) => (
                     <motion.div 
                       key={idx} 
                       whileHover={{ scale: 1.05 }}
-                      className="bg-white/5 border border-white/10 rounded-lg p-3 min-w-[120px] flex items-center justify-between hover:border-success/30 transition-all duration-300"
+                      onClick={() => navigate(`/day/${pDay.day}`)}
+                      className="bg-white/5 border border-white/10 rounded-lg p-3 min-w-[120px] flex items-center justify-between hover:border-success/30 transition-all duration-300 cursor-pointer"
                     >
                       <span className="font-medium text-sm">Day {pDay.day}</span>
                       <CheckCircle2 size={16} className="text-success" />

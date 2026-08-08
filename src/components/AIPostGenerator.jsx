@@ -31,7 +31,9 @@ export default function AIPostGenerator({ task, student }) {
       console.error("Using fallback post template:", err);
       // Fallback for local development or if API key is missing
       setTimeout(() => {
-        setPostText(`Just completed Day ${task.day} of the ABTalks 60-Day Coding Challenge! \n\nToday I built a ${task.title.toLowerCase()} — ${task.description.split('.')[0]}. Understanding how systems expose themselves on a network is fundamental to cybersecurity. \n\nIf you're on the fence about starting — just start. Consistency beats perfection every time.\n\n#Cybersecurity #60DayChallenge #BuildInPublic`);
+        const desc = task.description ? ` — ${task.description.split('.')[0]}.` : '.';
+        const track = task.track || student.track || 'coding';
+        setPostText(`Just completed Day ${task.day} of the ABTalks 60-Day Coding Challenge! \n\nToday I worked on "${task.title}"${desc} Building consistency one day at a time. \n\nIf you're on the fence about starting — just start. Consistency beats perfection every time.\n\n#${track.replace(/\s+/g, '')} #60DayChallenge #BuildInPublic`);
       }, 800);
     } finally {
       setLoading(false);

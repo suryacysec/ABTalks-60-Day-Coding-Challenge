@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { prompt } = req.body;
+    const { prompt, type } = req.body;
     const apiKey = process.env.GEMINI_API_KEY; // Note: NO VITE_ prefix, this is a secure server variable
 
     if (!apiKey) {
@@ -15,7 +15,10 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: type === 'task' ? {
+          responseMimeType: 'application/json',
+        } : undefined,
       })
     });
 
@@ -30,3 +33,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+

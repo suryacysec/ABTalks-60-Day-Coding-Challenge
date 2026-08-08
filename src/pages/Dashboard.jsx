@@ -1,32 +1,32 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  student, 
-  submissionHistory, 
-  todayTask, 
-  allDays, 
-  leaderboard, 
-  peerActivity 
-} from '../data/mock';
+import { useStore } from '../data/store';
+import { leaderboard, peerActivity } from '../data/mock';
 import StreakCard from '../components/StreakCard';
 import ProgressBar from '../components/ProgressBar';
 import DifficultyChart from '../components/DifficultyChart';
 import PeerFeed from '../components/PeerFeed';
 import RecruiterView from '../components/RecruiterView';
-import { Flame, Trophy, Target, ArrowRight, Crown } from 'lucide-react';
+import { Flame, Trophy, Target, ArrowRight, Crown, Plus } from 'lucide-react';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [recruiterView, setRecruiterView] = useState(false);
+  const { student, todayTask, submissionHistory, allDays, hasProfile, currentDay } = useStore();
 
-  if (!student) {
+  // Redirect to landing if no profile
+  if (!hasProfile || !student) {
     return (
       <div className="min-h-screen p-6 flex flex-col items-center justify-center">
         <div className="glass-card p-8 text-center w-full max-w-sm">
-          <h2 className="text-2xl font-bold mb-4">Complete your profile to start</h2>
-          <button className="btn-glass-primary py-3 w-full">
-            Set up profile
+          <h2 className="text-2xl font-bold mb-4">Set up your profile to start</h2>
+          <p className="text-gray-400 mb-6 text-sm">Create your profile to begin your 60-day coding challenge journey.</p>
+          <button 
+            onClick={() => navigate('/')}
+            className="btn-glass-primary py-3 w-full"
+          >
+            Go to Home Page
           </button>
         </div>
       </div>
@@ -166,7 +166,7 @@ export default function Dashboard() {
               {hasMissedDay && (
                 <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="bg-orange-500/10 border border-orange-500/30 text-orange-400 p-4 rounded-xl text-sm flex items-start gap-3">
                   <span className="text-lg">⚠️</span>
-                  <p>You missed Day 8. Don't let it happen again. Keep going 💪</p>
+                  <p>You have missed days. Don't let it happen again. Keep going 💪</p>
                 </motion.div>
               )}
 
@@ -184,31 +184,52 @@ export default function Dashboard() {
                   <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-[60px]" />
                   <div className="absolute bottom-0 left-0 w-32 h-32 bg-secondary/5 rounded-full blur-[50px]" />
                   
-                  <div className="flex justify-between items-start mb-4 relative z-10">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-3 py-1 rounded-full">Day {todayTask.day} of 60</span>
-                    </div>
-                    <span className="text-xs font-semibold bg-amber-500/20 text-amber-400 px-3 py-1 rounded-full">
-                      {todayTask.difficulty}
-                    </span>
-                  </div>
-                  
-                  <h3 className="text-2xl font-bold mb-2 relative z-10">{todayTask.title}</h3>
-                  <p className="text-gray-400 text-sm mb-6 line-clamp-2 relative z-10">{todayTask.description}</p>
-                  
-                  <button 
-                    onClick={() => navigate(`/day/${todayTask.day}`)}
-                    className="btn-glass-primary py-3.5 w-full text-base group relative z-10"
-                  >
-                    Start Today's Challenge 
-                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </button>
+                  {todayTask ? (
+                    <>
+                      <div className="flex justify-between items-start mb-4 relative z-10">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-3 py-1 rounded-full">Day {currentDay} of 60</span>
+                        </div>
+                        <span className="text-xs font-semibold bg-amber-500/20 text-amber-400 px-3 py-1 rounded-full">
+                          {todayTask.difficulty}
+                        </span>
+                      </div>
+                      
+                      <h3 className="text-2xl font-bold mb-2 relative z-10">{todayTask.title}</h3>
+                      <p className="text-gray-400 text-sm mb-6 line-clamp-2 relative z-10">{todayTask.description}</p>
+                      
+                      <button 
+                        onClick={() => navigate(`/day/${currentDay}`)}
+                        className="btn-glass-primary py-3.5 w-full text-base group relative z-10"
+                      >
+                        Start Today's Challenge 
+                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-center py-4 relative z-10">
+                        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                          <Plus size={28} className="text-primary" />
+                        </div>
+                        <h3 className="text-xl font-bold mb-2">No task for Day {currentDay}</h3>
+                        <p className="text-gray-400 text-sm mb-6">Create or generate a task to keep your streak alive!</p>
+                        <button 
+                          onClick={() => navigate(`/day/${currentDay}`)}
+                          className="btn-glass-primary py-3.5 w-full text-base group"
+                        >
+                          Add Today's Task 
+                          <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </motion.div>
 
               {/* PROGRESS */}
               <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="glass-card p-6">
-                <ProgressBar current={student.day} total={student.totalDays} />
+                <ProgressBar current={currentDay - 1} total={student.totalDays} />
               </motion.div>
 
               {/* ACHIEVEMENTS */}
@@ -291,7 +312,7 @@ export default function Dashboard() {
                 <h3 className="font-bold mb-2 flex items-center gap-2">
                   <span className="text-lg">📈</span> What's Ahead
                 </h3>
-                <DifficultyChart data={allDays} currentDay={student.day} />
+                <DifficultyChart data={allDays} currentDay={currentDay} />
               </motion.div>
 
               {/* PEER ACTIVITY */}

@@ -4,6 +4,7 @@ import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import ChallengeDay from './pages/ChallengeDay';
 import { ToastProvider } from './components/Toast';
+import { StoreProvider } from './data/store';
 
 const PageTransition = ({ children }) => {
   const location = useLocation();
@@ -40,14 +41,17 @@ const AnimatedRoutes = () => {
 
 function App() {
   return (
-    <ToastProvider>
-      <HashRouter>
-        <div className="min-h-screen text-white antialiased w-full max-w-[390px] mx-auto sm:max-w-none shadow-2xl shadow-primary/5">
-          <AnimatedRoutes />
-        </div>
-      </HashRouter>
-    </ToastProvider>
+    <StoreProvider>
+      <ToastProvider>
+        <HashRouter>
+          <div className="min-h-screen text-white antialiased w-full max-w-[390px] mx-auto sm:max-w-none shadow-2xl shadow-primary/5">
+            <AnimatedRoutes />
+          </div>
+        </HashRouter>
+      </ToastProvider>
+    </StoreProvider>
   );
 }
 
 export default App;
+
