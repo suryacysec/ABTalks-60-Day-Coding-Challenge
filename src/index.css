@@ -18,12 +18,12 @@
   }
 
   .btn-glass {
-    @apply relative overflow-hidden backdrop-blur-lg border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_4px_15px_rgba(0,0,0,0.5)] transition-all duration-300 ease-out active:scale-95 flex items-center justify-center font-bold rounded-xl;
+    @apply relative overflow-hidden bg-white/5 backdrop-blur-xl border-t border-white/30 border-l border-white/20 border-r border-white/10 border-b border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.4),0_8px_20px_rgba(0,0,0,0.6)] transition-all duration-150 ease-out active:scale-95 flex items-center justify-center font-bold rounded-xl;
   }
 
   .btn-glass::before {
     content: '';
-    @apply absolute top-0 left-[-100%] w-[50%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] transition-all duration-700;
+    @apply absolute top-0 left-[-100%] w-[50%] h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-25deg] transition-all duration-500 ease-out;
   }
 
   .btn-glass:hover::before {
@@ -31,11 +31,11 @@
   }
 
   .btn-glass-primary {
-    @apply btn-glass bg-gradient-to-r from-primary/80 to-primary text-white hover:shadow-[0_0_20px_rgba(124,58,237,0.5)] border-primary/50;
+    @apply btn-glass bg-gradient-to-r from-primary/60 to-primary/80 text-white hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.5),0_0_25px_rgba(124,58,237,0.7)] hover:border-white/40 hover:-translate-y-0.5;
   }
 
   .btn-glass-secondary {
-    @apply btn-glass bg-white/10 hover:bg-white/20 text-white hover:shadow-[0_0_15px_rgba(255,255,255,0.1)];
+    @apply btn-glass bg-white/10 hover:bg-white/20 text-white hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.5),0_0_20px_rgba(255,255,255,0.2)] hover:border-white/40 hover:-translate-y-0.5;
   }
 }
 

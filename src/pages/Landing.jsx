@@ -119,8 +119,8 @@ export default function Landing() {
       <motion.section 
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.6 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.4 }}
         id="how-it-works" 
         className="w-full py-20 px-6 max-w-5xl mx-auto"
       >
@@ -136,9 +136,9 @@ export default function Landing() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.2, duration: 0.5 }}
+              transition={{ delay: idx * 0.1, duration: 0.3 }}
               whileHover={{ y: -5 }}
-              className="glass-card p-6 min-w-[280px] snap-center flex-1 relative transition-all duration-300"
+              className="glass-card p-6 min-w-[280px] snap-center flex-1 relative transition-all duration-200"
             >
               <div className="w-10 h-10 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold mb-4">{item.step}</div>
               <h3 className="text-xl font-bold mb-2">{item.title}</h3>
@@ -153,8 +153,8 @@ export default function Landing() {
       <motion.section 
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.6 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.4 }}
         className="w-full py-10 px-6 max-w-5xl mx-auto"
       >
         <h2 className="text-3xl font-bold mb-10">4 Specialized Tracks</h2>
@@ -166,8 +166,8 @@ export default function Landing() {
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="glass-card p-6 group hover:border-primary/50 transition-all duration-300"
+              transition={{ delay: idx * 0.05, duration: 0.3 }}
+              className="glass-card p-6 group hover:border-primary/50 transition-all duration-200"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="p-3 bg-white/5 rounded-xl group-hover:bg-primary/10 transition-colors">
@@ -186,8 +186,8 @@ export default function Landing() {
       <motion.section 
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.4 }}
         className="w-full py-16"
       >
         <h2 className="text-2xl font-bold mb-8 px-6 max-w-5xl mx-auto">Students Already Building</h2>
@@ -198,9 +198,9 @@ export default function Landing() {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.05 }}
+              transition={{ delay: idx * 0.03, duration: 0.3 }}
               whileHover={{ y: -5, scale: 1.02 }}
-              className="glass-card p-5 min-w-[260px] snap-center flex items-center gap-4 transition-all duration-300"
+              className="glass-card p-5 min-w-[260px] snap-center flex items-center gap-4 transition-all duration-200"
             >
               <img 
                 src={`https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1A1A24&color=fff`} 
@@ -246,7 +246,7 @@ export default function Landing() {
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.4 }}
         className="w-full py-24 px-6 max-w-3xl mx-auto text-center flex flex-col items-center"
       >
         <h2 className="text-4xl font-bold mb-6">Ready to commit?</h2>
