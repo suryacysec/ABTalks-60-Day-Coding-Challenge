@@ -1,7 +1,7 @@
 export const student = {
-  name: "Suryansh",
-  college: "AKTU – CSE",
-  track: "Cybersecurity",
+  name: "Suryansh Gupta",
+  college: "AKGEC",
+  track: "B.TECH in IT",
   day: 12,
   totalDays: 60,
   streak: 12,
@@ -79,7 +79,7 @@ export const allDays = Array.from({ length: 60 }, (_, i) => {
 export const leaderboard = [
   { name: "Rahul S.", college: "IIT Delhi", streak: 45, track: "DSA & CP", rank: 1 },
   { name: "Priya M.", college: "NIT Trichy", streak: 42, track: "Web Dev", rank: 2 },
-  { name: "Suryansh", college: "AKTU – CSE", streak: 12, track: "Cybersecurity", rank: 3 },
+  { name: "Suryansh Gupta", college: "AKGEC", streak: 12, track: "B.TECH in IT", rank: 3 },
   { name: "Arjun K.", college: "VIT", streak: 40, track: "AI/ML", rank: 4 },
   { name: "Neha R.", college: "BITS Pilani", streak: 38, track: "Web Dev", rank: 5 },
   { name: "Aditya V.", college: "IIIT Hyderabad", streak: 36, track: "Cybersecurity", rank: 6 },

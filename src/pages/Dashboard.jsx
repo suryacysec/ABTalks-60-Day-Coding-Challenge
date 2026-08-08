@@ -93,22 +93,33 @@ export default function Dashboard() {
           ) : (
             <motion.div 
               key="student"
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+              initial="hidden" animate="visible" exit={{ opacity: 0, y: -10 }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.1 }
+                }
+              }}
               className="space-y-6"
             >
-              {renderHeader()}
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+                {renderHeader()}
+              </motion.div>
 
               {hasMissedDay && (
-                <div className="bg-orange-500/10 border border-orange-500/30 text-orange-400 p-4 rounded-xl text-sm flex items-start gap-3">
+                <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="bg-orange-500/10 border border-orange-500/30 text-orange-400 p-4 rounded-xl text-sm flex items-start gap-3">
                   <span className="text-lg">⚠️</span>
                   <p>You missed Day 8. Don't let it happen again. Keep going 💪</p>
-                </div>
+                </motion.div>
               )}
 
-              <StreakCard streak={student.streak} history={submissionHistory} />
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+                <StreakCard streak={student.streak} history={submissionHistory} />
+              </motion.div>
 
               {/* TODAY'S TASK CARD */}
-              <div className="glass-card p-6 border-primary/30 relative overflow-hidden">
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} whileHover={{ y: -2 }} className="glass-card p-6 border-primary/30 relative overflow-hidden transition-all duration-300">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-[40px]" />
                 
                 <div className="flex justify-between items-start mb-4">
@@ -127,21 +138,25 @@ export default function Dashboard() {
                 >
                   Start Today's Challenge →
                 </button>
-              </div>
+              </motion.div>
 
               {/* PROGRESS */}
-              <div className="glass-card p-6">
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="glass-card p-6">
                 <ProgressBar current={student.day} total={student.totalDays} />
-              </div>
+              </motion.div>
 
               {/* ACHIEVEMENTS */}
-              <div>
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
                 <h3 className="font-bold mb-4">Achievements</h3>
                 <div className="flex overflow-x-auto hide-scrollbar gap-3 pb-2 snap-x">
-                  {student.achievements.map((ach) => (
-                    <div 
+                  {student.achievements.map((ach, idx) => (
+                    <motion.div 
                       key={ach.id} 
-                      className={`min-w-[120px] snap-start p-4 rounded-xl text-center border ${
+                      whileHover={{ scale: 1.05 }}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.3 + (idx * 0.1) }}
+                      className={`min-w-[120px] snap-start p-4 rounded-xl text-center border transition-all duration-300 ${
                         ach.unlocked 
                           ? 'bg-white/5 border-white/10' 
                           : 'bg-transparent border-white/5 grayscale opacity-50'
@@ -156,13 +171,13 @@ export default function Dashboard() {
                         )}
                       </div>
                       <div className="text-xs font-medium">{ach.label}</div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
               {/* STANDINGS */}
-              <div className="glass-card p-0 overflow-hidden">
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="glass-card p-0 overflow-hidden">
                 <div className="p-4 border-b border-white/10 bg-white/5">
                   <h3 className="font-bold flex items-center gap-2">
                     {student.percentile} this week 🎯
@@ -170,9 +185,12 @@ export default function Dashboard() {
                 </div>
                 <div className="divide-y divide-white/5">
                   {leaderboard.slice(0, 5).map((lUser, idx) => (
-                    <div 
+                    <motion.div 
                       key={idx} 
-                      className={`p-4 flex items-center justify-between ${
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 + (idx * 0.1) }}
+                      className={`p-4 flex items-center justify-between transition-colors hover:bg-white/5 ${
                         lUser.name === student.name ? 'bg-primary/10 border-l-4 border-primary' : ''
                       }`}
                     >
@@ -183,7 +201,7 @@ export default function Dashboard() {
                         <img 
                           src={`https://ui-avatars.com/api/?name=${encodeURIComponent(lUser.name)}&background=1A1A24&color=fff`} 
                           alt={lUser.name}
-                          className="w-8 h-8 rounded-full"
+                          className="w-8 h-8 rounded-full transition-transform hover:scale-110"
                         />
                         <div>
                           <div className="font-medium text-sm">{lUser.name}</div>
@@ -191,19 +209,21 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <div className="font-bold text-orange-400">{lUser.streak} 🔥</div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
               {/* DIFFICULTY CHART */}
-              <div>
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
                 <h3 className="font-bold mb-2">What's Ahead</h3>
                 <DifficultyChart data={allDays} currentDay={student.day} />
-              </div>
+              </motion.div>
 
               {/* PEER ACTIVITY */}
-              <PeerFeed peers={peerActivity} />
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+                <PeerFeed peers={peerActivity} />
+              </motion.div>
               
             </motion.div>
           )}
