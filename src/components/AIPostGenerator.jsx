@@ -13,37 +13,26 @@ export default function AIPostGenerator({ task, student }) {
     setPostText('');
     
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-      
-      if (!apiKey) {
-        // Fallback if no API key is provided
-        setTimeout(() => {
-          setPostText(`Just completed Day ${task.day} of the ABTalks 60-Day Coding Challenge! \n\nToday I built a ${task.title.toLowerCase()} — ${task.description.split('.')[0]}. Understanding how systems expose themselves on a network is fundamental to cybersecurity. \n\nIf you're on the fence about starting — just start. Consistency beats perfection every time.\n\n#Cybersecurity #60DayChallenge #BuildInPublic`);
-          setLoading(false);
-        }, 1500);
-        return;
-      }
-
       const prompt = `Write a professional LinkedIn post for a CS student named ${student.name} who just completed Day ${task.day} of a 60-day coding challenge. Task: ${task.title}. Track: ${task.track}. Make it enthusiastic, under 150 words, include these 3 hashtags at the end: #Cybersecurity #60DayChallenge #BuildInPublic. End with encouragement for other students. No emojis in the text body.`;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      const response = await fetch('/api/generate-post', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
-        })
+        body: JSON.stringify({ prompt })
       });
 
       if (!response.ok) {
-        throw new Error('API Error');
+        throw new Error('API Error or running locally without Vercel');
       }
 
       const data = await response.json();
-      setPostText(data.candidates[0].content.parts[0].text);
+      setPostText(data.text);
     } catch (err) {
-      console.error(err);
-      addToast("Error generating post. Using template.", "error");
-      setPostText(`Just completed Day ${task.day} of the ABTalks 60-Day Coding Challenge! Today I worked on ${task.title}. Keep building! #Cybersecurity #60DayChallenge #BuildInPublic`);
+      console.error("Using fallback post template:", err);
+      // Fallback for local development or if API key is missing
+      setTimeout(() => {
+        setPostText(`Just completed Day ${task.day} of the ABTalks 60-Day Coding Challenge! \n\nToday I built a ${task.title.toLowerCase()} — ${task.description.split('.')[0]}. Understanding how systems expose themselves on a network is fundamental to cybersecurity. \n\nIf you're on the fence about starting — just start. Consistency beats perfection every time.\n\n#Cybersecurity #60DayChallenge #BuildInPublic`);
+      }, 800);
     } finally {
       setLoading(false);
     }
