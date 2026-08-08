@@ -10,9 +10,9 @@ A production-quality, mobile-first web application that tracks a 60-day coding c
 [![Styled with Tailwind](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Powered by Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev)
 [![Framer Motion](https://img.shields.io/badge/Framer_Motion-13-FF0055?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
-[![Deployed on GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Live-222?style=for-the-badge&logo=github&logoColor=white)](https://suryacysec.github.io/ABTalks-60-Day-Coding-Challenge/)
+[![Deployed on GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Live-222?style=for-the-badge&logo=github&logoColor=white)](https://ab-talks-60-day-coding-challenge.vercel.app/)
 
-[**🌐 Live Demo**](https://suryacysec.github.io/ABTalks-60-Day-Coding-Challenge/) · [**📝 AI Usage Log**](./PROMPTS.md) · [**🐛 Report Bug**](https://github.com/suryacysec/ABTalks-60-Day-Coding-Challenge/issues)
+[**🌐 Live Demo**](https://ab-talks-60-day-coding-challenge.vercel.app/) · [**📝 AI Usage Log**](./PROMPTS.md) · [**🐛 Report Bug**](https://github.com/suryacysec/ABTalks-60-Day-Coding-Challenge/issues)
 
 </div>
 
@@ -186,7 +186,7 @@ ABTalks-60-Day-Coding-Challenge/
 
 The app is automatically deployed to GitHub Pages on every push to `main` via the [static.yml](.github/workflows/static.yml) workflow.
 
-**Live URL:** [https://suryacysec.github.io/ABTalks-60-Day-Coding-Challenge/](https://suryacysec.github.io/ABTalks-60-Day-Coding-Challenge/)
+**Live URL:** [https://ab-talks-60-day-coding-challenge.vercel.app/](https://ab-talks-60-day-coding-challenge.vercel.app/)
 
 ### Vercel (Optional — for AI Post Generator)
 
