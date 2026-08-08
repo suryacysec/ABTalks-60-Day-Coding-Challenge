@@ -55,7 +55,7 @@ export default function SubmissionForm({ day, alreadySubmitted }) {
         
         <button 
           onClick={() => navigate('/dashboard')}
-          className="bg-white hover:bg-gray-200 text-black font-bold py-3 px-8 rounded-xl transition-all active:scale-95"
+          className="btn-glass-primary py-3 px-8"
         >
           Back to Dashboard
         </button>
@@ -126,7 +126,7 @@ export default function SubmissionForm({ day, alreadySubmitted }) {
         <button 
           type="submit"
           disabled={!canSubmit || submitting}
-          className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex justify-center items-center gap-2 mt-2"
+          className="btn-glass-primary py-4 w-full mt-2 disabled:opacity-50 disabled:active:scale-100 disabled:hover:shadow-none"
         >
           {submitting ? (
             <><Loader2 size={20} className="animate-spin" /> Submitting...</>

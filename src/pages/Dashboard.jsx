@@ -24,7 +24,7 @@ export default function Dashboard() {
       <div className="min-h-screen p-6 flex flex-col items-center justify-center">
         <div className="glass-card p-8 text-center w-full max-w-sm">
           <h2 className="text-2xl font-bold mb-4">Complete your profile to start</h2>
-          <button className="bg-primary hover:bg-primary/90 text-white w-full py-3 rounded-xl font-semibold">
+          <button className="btn-glass-primary py-3 w-full">
             Set up profile
           </button>
         </div>
@@ -134,7 +134,7 @@ export default function Dashboard() {
                 
                 <button 
                   onClick={() => navigate(`/day/${todayTask.day}`)}
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all active:scale-95"
+                  className="btn-glass-primary py-3 w-full"
                 >
                   Start Today's Challenge →
                 </button>

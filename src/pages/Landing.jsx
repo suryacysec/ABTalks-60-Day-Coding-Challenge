@@ -101,13 +101,13 @@ export default function Landing() {
           >
             <button 
               onClick={() => navigate('/dashboard')}
-              className="bg-primary hover:bg-primary/90 text-white font-semibold py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95"
+              className="btn-glass-primary py-4 px-8 flex items-center justify-center gap-2"
             >
               Start Your 60 Days <ArrowRight size={20} />
             </button>
             <button 
               onClick={() => document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' })}
-              className="glass hover:bg-white/10 text-white font-semibold py-4 px-8 rounded-xl transition-all active:scale-95"
+              className="btn-glass-secondary py-4 px-8"
             >
               See How It Works
             </button>
@@ -258,7 +258,7 @@ export default function Landing() {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full bg-[#13131A] border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-primary transition-colors"
           />
-          <button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all active:scale-95">
+          <button type="submit" className="btn-glass-primary py-4 w-full">
             Join the Challenge
           </button>
         </form>

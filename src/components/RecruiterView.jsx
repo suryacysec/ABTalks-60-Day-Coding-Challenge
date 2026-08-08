@@ -54,7 +54,7 @@ export default function RecruiterView({ student, history }) {
 
       <button 
         onClick={handleViewProfile}
-        className="w-full bg-white hover:bg-gray-200 text-black font-bold py-4 rounded-xl transition-all active:scale-95"
+        className="btn-glass-primary py-4 w-full"
       >
         View Full Profile
       </button>

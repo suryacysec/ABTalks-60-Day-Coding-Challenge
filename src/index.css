@@ -16,6 +16,27 @@
   .glass-card {
     @apply bg-card border border-white/10 rounded-2xl;
   }
+
+  .btn-glass {
+    @apply relative overflow-hidden backdrop-blur-lg border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_4px_15px_rgba(0,0,0,0.5)] transition-all duration-300 ease-out active:scale-95 flex items-center justify-center font-bold rounded-xl;
+  }
+
+  .btn-glass::before {
+    content: '';
+    @apply absolute top-0 left-[-100%] w-[50%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] transition-all duration-700;
+  }
+
+  .btn-glass:hover::before {
+    @apply left-[200%];
+  }
+
+  .btn-glass-primary {
+    @apply btn-glass bg-gradient-to-r from-primary/80 to-primary text-white hover:shadow-[0_0_20px_rgba(124,58,237,0.5)] border-primary/50;
+  }
+
+  .btn-glass-secondary {
+    @apply btn-glass bg-white/10 hover:bg-white/20 text-white hover:shadow-[0_0_15px_rgba(255,255,255,0.1)];
+  }
 }
 
 /* Animations */

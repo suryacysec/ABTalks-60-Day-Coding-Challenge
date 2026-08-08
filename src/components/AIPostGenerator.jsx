@@ -70,7 +70,7 @@ export default function AIPostGenerator({ task, student }) {
       {!postText && !loading ? (
         <button 
           onClick={handleGenerate}
-          className="w-full bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 font-bold py-3 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2"
+          className="btn-glass-primary py-3 w-full"
         >
           <Sparkles size={18} /> Generate Post
         </button>
@@ -87,7 +87,7 @@ export default function AIPostGenerator({ task, student }) {
           </div>
           <button 
             onClick={handleCopy}
-            className="w-full glass hover:bg-white/10 text-white font-bold py-3 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2"
+            className="btn-glass-secondary py-3 w-full"
           >
             {copied ? <><Check size={18} className="text-success" /> Copied ✓</> : <><Copy size={18} /> Copy to Clipboard</>}
           </button>

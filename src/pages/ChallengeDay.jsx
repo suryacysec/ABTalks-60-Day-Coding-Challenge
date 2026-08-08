@@ -54,7 +54,7 @@ export default function ChallengeDay() {
             <p className="text-gray-400">Complete Day {student.day} first to unlock this challenge.</p>
             <button 
               onClick={() => navigate('/dashboard')}
-              className="mt-8 bg-white hover:bg-gray-200 text-black font-bold py-3 px-8 rounded-xl transition-all"
+              className="mt-8 btn-glass-primary py-3 px-8"
             >
               Go to Today's Task
             </button>
