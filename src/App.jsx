@@ -12,11 +12,11 @@ const PageTransition = ({ children }) => {
     <AnimatePresence mode="wait">
       <motion.div
         key={location.pathname}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -15 }}
         transition={{ duration: 0.3 }}
-        className="min-h-screen bg-background text-white w-full max-w-md mx-auto sm:max-w-none"
+        className="min-h-screen text-white w-full max-w-md mx-auto sm:max-w-none"
       >
         {children}
       </motion.div>
@@ -42,7 +42,7 @@ function App() {
   return (
     <ToastProvider>
       <HashRouter>
-        <div className="min-h-screen bg-background text-white antialiased w-full max-w-[390px] mx-auto sm:max-w-none shadow-2xl shadow-primary/5">
+        <div className="min-h-screen text-white antialiased w-full max-w-[390px] mx-auto sm:max-w-none shadow-2xl shadow-primary/5">
           <AnimatedRoutes />
         </div>
       </HashRouter>

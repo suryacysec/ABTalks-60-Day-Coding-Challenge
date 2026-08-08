@@ -4,8 +4,28 @@
 
 @layer base {
   body {
-    @apply bg-background text-white antialiased selection:bg-primary/30;
+    @apply text-white antialiased selection:bg-primary/30;
+    background: linear-gradient(-45deg, #0A0A0F, #161128, #0e1630, #0A0A0F);
+    background-size: 400% 400%;
+    animation: auroraBG 20s ease infinite;
+    background-attachment: fixed;
   }
+  
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+@keyframes auroraBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 @layer utilities {

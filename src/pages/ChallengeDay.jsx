@@ -24,7 +24,7 @@ export default function ChallengeDay() {
 
   return (
     <div className="min-h-screen pb-20 w-full relative">
-      <header className="px-6 py-4 sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-white/10 flex items-center justify-between">
+      <header className="px-6 py-4 sticky top-0 z-40 bg-[#0A0A0F]/50 backdrop-blur-md border-b border-white/10 flex items-center justify-between">
         <button 
           onClick={() => navigate('/dashboard')}
           className="text-gray-400 hover:text-white p-2 -ml-2 rounded-full transition-colors"

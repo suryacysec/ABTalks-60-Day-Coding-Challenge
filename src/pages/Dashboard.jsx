@@ -64,7 +64,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen pb-20 w-full">
-      <div className="px-4 py-3 sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-white/10 flex justify-between items-center">
+      <div className="px-4 py-3 sticky top-0 z-40 bg-[#0A0A0F]/50 backdrop-blur-md border-b border-white/10 flex justify-between items-center">
         <div className="font-bold">ABTalks</div>
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium text-gray-300">Recruiter View</span>
