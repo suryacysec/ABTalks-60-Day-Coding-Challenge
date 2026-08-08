@@ -1,7 +1,14 @@
 import React from 'react';
 import StreakCard from './StreakCard';
+import { useToast } from './Toast';
 
 export default function RecruiterView({ student, history }) {
+  const { addToast } = useToast();
+
+  const handleViewProfile = () => {
+    addToast("Full profile view is coming soon!", "success");
+  };
+
   return (
     <div className="w-full space-y-6">
       <div className="glass-card p-6 flex flex-col items-center text-center relative overflow-hidden">
@@ -45,7 +52,10 @@ export default function RecruiterView({ student, history }) {
         </div>
       </div>
 
-      <button className="w-full bg-white hover:bg-gray-200 text-black font-bold py-4 rounded-xl transition-all active:scale-95">
+      <button 
+        onClick={handleViewProfile}
+        className="w-full bg-white hover:bg-gray-200 text-black font-bold py-4 rounded-xl transition-all active:scale-95"
+      >
         View Full Profile
       </button>
     </div>
