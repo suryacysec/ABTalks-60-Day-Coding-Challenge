@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
@@ -41,11 +41,11 @@ const AnimatedRoutes = () => {
 function App() {
   return (
     <ToastProvider>
-      <BrowserRouter>
+      <HashRouter>
         <div className="min-h-screen bg-background text-white antialiased w-full max-w-[390px] mx-auto sm:max-w-none shadow-2xl shadow-primary/5">
           <AnimatedRoutes />
         </div>
-      </BrowserRouter>
+      </HashRouter>
     </ToastProvider>
   );
 }
