@@ -296,8 +296,8 @@ This project is open source and available under the [MIT License](LICENSE).
 **Suryansh Gupta**
 B.Tech in IT · AKGEC
 
-[![GitHub](https://img.shields.io/badge/GitHub-suryanshgupta07c-181717?style=for-the-badge&logo=github)](https://github.com/suryanshgupta07)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-suryanshgupta07c-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/suryanshgupta07/)
+[![GitHub](https://img.shields.io/badge/GitHub-suryanshgupta07-181717?style=for-the-badge&logo=github)](https://github.com/suryanshgupta07)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-suryanshgupta07-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/suryanshgupta07/)
 
 ---
 
